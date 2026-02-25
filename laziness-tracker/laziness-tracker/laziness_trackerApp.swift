@@ -11,7 +11,7 @@ import SwiftUI
 struct laziness_trackerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            WelcomeView()
         }
     }
 }
