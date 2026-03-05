@@ -46,8 +46,8 @@ struct OnboardingView: View {
                     .padding()
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .animation(.easeInOut, value: currentPage)
+            .tabViewStyle(.page(indexDisplayMode: .always)) // gives navigation dots on bottom
+            .animation(.easeInOut, value: currentPage) // more pleasent transition
         }
     }
 }

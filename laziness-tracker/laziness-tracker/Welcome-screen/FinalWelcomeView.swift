@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct LastWelcomeView: View {
+    @State private var name: String = "" // name
+    
+    private var isNameValid: Bool { // checks if name is empty
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty // if name not empty return true
+    }
+    
     var body: some View {
         ZStack {
 
@@ -36,6 +42,22 @@ struct LastWelcomeView: View {
                         .padding(.horizontal, 8)
                 }
                 .padding(.horizontal)
+                
+                TextField("Enter your name", text: $name)
+                    .padding()
+                       .background(.ultraThinMaterial)
+                       .background(
+                           RoundedRectangle(cornerRadius: 20)
+                               .fill(.white.opacity(0.1))
+                       )
+                       .clipShape(RoundedRectangle(cornerRadius: 20))
+                       .overlay(
+                           RoundedRectangle(cornerRadius: 20)
+                               .stroke(.white.opacity(0.25), lineWidth: 1)
+                       )
+                       .shadow(color: .black.opacity(0.2), radius: 15, y: 5)
+                    .padding(.horizontal)
+                
                 Button(action: {
                     
                 }) {
@@ -45,6 +67,8 @@ struct LastWelcomeView: View {
                         .padding(.vertical, 10)
                         .background(.ultraThinMaterial, in: Capsule())
                 }
+                .disabled(!isNameValid) // if name is empty disable button
+                .opacity(isNameValid ? 1.0 : 0.5) // make btn transparent if name is empty
             }
             }
             .padding(24)
