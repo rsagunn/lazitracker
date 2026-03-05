@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    var onNext: (() -> Void)? = nil
+    var onSkip: (() -> Void)? = nil
     
     var body: some View {
         ZStack {
@@ -16,7 +18,7 @@ struct WelcomeView: View {
             VStack {
                 HStack {
                     Button("Skip") {
-                        // TODO: Handle skip action (e.g., dismiss or navigate)
+                        onSkip?()
                     }
                     .foregroundStyle(.blue)
                     .buttonStyle(.plain)
@@ -53,7 +55,7 @@ struct WelcomeView: View {
                 }
                 .padding(.horizontal)
                 Button(action: {
-                    
+                    onNext?()
                 }) {
                     Label("Next", systemImage: "arrow.right.circle.fill")
                         .font(.headline)

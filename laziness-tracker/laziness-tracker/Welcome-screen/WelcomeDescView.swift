@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct WelcomeDescView: View {
+    var onNext: (() -> Void)? = nil
+    
     var body: some View {
         ZStack {
 
@@ -37,7 +39,7 @@ struct WelcomeDescView: View {
                 }
                 .padding(.horizontal)
                 Button(action: {
-                    
+                    onNext?()
                 }) {
                     Label("Next", systemImage: "arrow.right.circle.fill")
                         .font(.headline)
