@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct mainView: View {
+    let name: String
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: 16) {
+            Text("Welcome, \(name)!")
+                .font(.largeTitle.bold())
+            
+            Text("This is your main view.")
+                .foregroundStyle(.secondary)
+        }
     }
 }
 
 #Preview {
-    mainView()
+    mainView(name: "Preview")
 }

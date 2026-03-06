@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct laziness_trackerApp: App {
+    @State private var name: String = "" // stores name
+    @State private var isOnboarded: Bool = false
+
     var body: some Scene {
         WindowGroup {
-            OnboardingView()
+            if isOnboarded {
+                mainView(name: name)
+            } else {
+                OnboardingView(
+                    name: $name,
+                    onFinished: {
+                        isOnboarded = true 
+                    }
+                )
+            }
         }
     }
 }

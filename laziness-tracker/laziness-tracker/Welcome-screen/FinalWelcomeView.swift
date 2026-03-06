@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct LastWelcomeView: View {
-    @State private var name: String = "" // name
+    @Binding var name: String // name
+    var onGetStarted: () -> Void = {}
     
     private var isNameValid: Bool { // checks if name is empty
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty // if name not empty return true
@@ -59,7 +60,7 @@ struct LastWelcomeView: View {
                     .padding(.horizontal)
                 
                 Button(action: {
-                    
+                    onGetStarted()
                 }) {
                     Label("Get started", systemImage: "arrow.right.circle.fill")
                         .font(.headline)
@@ -82,5 +83,5 @@ struct LastWelcomeView: View {
 }
 
 #Preview {
-    LastWelcomeView()
+    LastWelcomeView(name: .constant("6767"))
 }

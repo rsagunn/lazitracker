@@ -15,13 +15,16 @@ struct OnboardingPage: Identifiable, Hashable {
 }
 
 struct OnboardingView: View {
+    @Binding var name: String // connects to $name in FinalWelcomeView
+    var onFinished: () -> Void = {}
+    
     @State private var currentPage = 0
 
     var body: some View {
         VStack {
             TabView(selection: $currentPage) {
                 Group {
-                    WelcomeView(
+                    WelcomeView( // uses buttons inside that view
                         onNext: {
                             currentPage = 1
                         },
@@ -41,7 +44,12 @@ struct OnboardingView: View {
                     .tag(1)
                     .padding()
 
-                    LastWelcomeView()
+                    LastWelcomeView(
+                        name: $name,
+                        onGetStarted: {
+                            onFinished()
+                        }
+                    )
                     .tag(2)
                     .padding()
                 }
@@ -53,6 +61,6 @@ struct OnboardingView: View {
 }
 
 #Preview {
-    OnboardingView()
+    OnboardingView(name: .constant("67"), onFinished: {}) // let name be 67
 }
 
