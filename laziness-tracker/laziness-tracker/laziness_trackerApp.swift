@@ -9,8 +9,8 @@ import SwiftUI
 
 @main
 struct laziness_trackerApp: App {
-    @State private var name: String = "" // stores name
-    @State private var isOnboarded: Bool = false
+    @AppStorage("userName") private var name: String = ""
+    @AppStorage("hasCompletedOnboarding") private var isOnboarded: Bool = false
 
     var body: some Scene {
         WindowGroup {
@@ -20,7 +20,7 @@ struct laziness_trackerApp: App {
                 OnboardingView(
                     name: $name,
                     onFinished: {
-                        isOnboarded = true 
+                        isOnboarded = true
                     }
                 )
             }

@@ -46,17 +46,15 @@ struct LastWelcomeView: View {
                 
                 TextField("Enter your name", text: $name)
                     .padding()
-                       .background(.ultraThinMaterial)
-                       .background(
-                           RoundedRectangle(cornerRadius: 20)
-                               .fill(.white.opacity(0.1))
-                       )
-                       .clipShape(RoundedRectangle(cornerRadius: 20))
-                       .overlay(
-                           RoundedRectangle(cornerRadius: 20)
-                               .stroke(.white.opacity(0.25), lineWidth: 1)
-                       )
-                       .shadow(color: .black.opacity(0.2), radius: 15, y: 5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.primary.opacity(0.06))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.white.opacity(0.25), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.2), radius: 15, y: 5)
                     .padding(.horizontal)
                 
                 Button(action: {
@@ -82,6 +80,7 @@ struct LastWelcomeView: View {
     }
 }
 
+
 #Preview {
-    LastWelcomeView(name: .constant("6767"))
+    LastWelcomeView(name: .constant(""), onGetStarted: {})
 }
