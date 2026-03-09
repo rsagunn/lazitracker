@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    var onNext: (() -> Void)? = nil
+    var onNext: (() -> Void)? = nil // takes nothing returns nothing
     var onSkip: (() -> Void)? = nil
     
     var body: some View {

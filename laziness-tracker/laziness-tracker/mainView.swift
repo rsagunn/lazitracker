@@ -8,21 +8,27 @@
 import SwiftUI
 
 struct mainView: View {
-    let name: String
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    let name: String // username from onboarding
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false // when false app shows onboarding again
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Welcome, \(name)!")
-                .font(.largeTitle.bold())
+        TimelineView(.atHourBoundaries) { context in // refreshes at each hour
+            VStack(alignment: .leading, spacing: 16) {
+                Text("\(context.date.timeGreeting), \(name)!")
+                    .font(.largeTitle.bold())
 
-            Text("This is your main view.")
-                .foregroundStyle(.secondary)
+                Text("This is your main view.")
+                    .foregroundStyle(.secondary)
 
-            Button("Restart app") {
-                hasCompletedOnboarding = false
+                Button("Restart app") {
+                    hasCompletedOnboarding = false // show onboarding again
+                }
+                .padding(.top, 8)
+
+                Spacer(minLength: 0)
             }
-            .padding(.top, 8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading) 
+            .padding()
         }
     }
 }
