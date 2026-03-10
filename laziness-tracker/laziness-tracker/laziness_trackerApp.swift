@@ -15,7 +15,7 @@ struct laziness_trackerApp: App {
     var body: some Scene {
         WindowGroup {
             if isOnboarded {
-                mainView(name: name)
+                MainTabView(name: name)
             } else {
                 OnboardingView(
                     name: $name,
