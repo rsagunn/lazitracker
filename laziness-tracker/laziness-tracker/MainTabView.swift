@@ -19,5 +19,5 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView(name: "Preview")
+    MainTabView(name: "LeBron James")
 }

@@ -9,7 +9,23 @@ import SwiftUI
 
 struct settingsView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            Form {
+                Section("About") { // about section
+                    LabeledContent("Version", value: appVersionString) // grabs version from info.plist
+                    LabeledContent("Build", value: appBuildString) // build number from info.plist
+                }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+
+    private var appVersionString: String { 
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—" // if no version show -
+    }
+
+    private var appBuildString: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—" // if no build number show -
     }
 }
 
