@@ -9,7 +9,7 @@ import SwiftUI
 
 struct mainView: View {
     let name: String // username from onboarding
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false // when false app shows onboarding again
+
 
     var body: some View {
         TimelineView(.atHourBoundaries) { context in // refreshes at each hour
@@ -20,9 +20,6 @@ struct mainView: View {
                 Text("This is your main view.")
                     .foregroundStyle(.secondary)
 
-                Button("Restart app") {
-                    hasCompletedOnboarding = false // show onboarding again
-                }
                 .padding(.top, 8)
 
                 Spacer(minLength: 0)
