@@ -10,6 +10,7 @@ import SwiftUI
 struct settingsView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false // when false app shows onboarding again
     @State private var isAlertShown = false
+    @AppStorage("userName") private var name: String = ""
     var body: some View {
         NavigationStack {
             Form {
@@ -24,13 +25,15 @@ struct settingsView: View {
                                         isAlertShown = true // show onboarding again
                                     }
                                     .alert("Are you sure you want to reset the app?", isPresented: $isAlertShown) {
-                                        Button("Yes", role: .destructive) {
+                                        Button("Yes", role: .destructive) { // .destructive shows btn means reset
                                             hasCompletedOnboarding = false
+                                            resetApp()
                                         }
                                     }
                                     } label: {
                                     // The label (description)
                                     Text("Reset")
+                                            .foregroundStyle(.red)
                                 }
                 }
             }
@@ -44,6 +47,9 @@ struct settingsView: View {
 
     private var appBuildString: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—" // if no build number show -
+    }
+    func resetApp() {
+        name = "" // clears the saved name
     }
 }
 
