@@ -12,21 +12,21 @@ private let habitsStorageKey = "habitTracker.habits.v1"
 private func dayKey(for date: Date) -> String {
     let cal = Calendar.current
     let c = cal.dateComponents([.year, .month, .day], from: date)
-    guard let y = c.year, let m = c.month, let d = c.day else { return "" }
-    return String(format: "%04d-%02d-%02d", y, m, d)
+    guard let y = c.year, let m = c.month, let d = c.day else { return "" } // if one component fails return ""
+    return String(format: "%04d-%02d-%02d", y, m, d) // eg 2026 12 26
 }
 
 
 struct Habit: Identifiable, Codable, Equatable {
-    var id: UUID
-    var title: String
-    var iconSystemName: String?
-    var completedDayKeys: Set<String>
+    var id: UUID // unique id
+    var title: String // habit name
+    var iconSystemName: String? // optional for icon or no icon
+    var completedDayKeys: Set<String> // day habit was complete
 }
 
-@Observable
-final class HabitStore {
-    private(set) var habits: [Habit] = []
+@Observable // updates if data changes
+final class HabitStore { // cant be used in another class
+    private(set) var habits: [Habit] = [] // only this class can write
 
     init() {
         load()
@@ -34,21 +34,10 @@ final class HabitStore {
 
     func add(title: String, iconSystemName: String?) {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        // Prevent duplicates (case-insensitive).
-        if habits.contains(where: { $0.title.caseInsensitiveCompare(trimmed) == .orderedSame }) { return }
-        habits.append(Habit(id: UUID(), title: trimmed, iconSystemName: iconSystemName, completedDayKeys: []))
+        guard !trimmed.isEmpty else { return } // no empty habits
+        if habits.contains(where: { $0.title.caseInsensitiveCompare(trimmed) == .orderedSame }) { return } // compares 2 strings case insensitive to prevent dupes
+        habits.append(Habit(id: UUID(), title: trimmed, iconSystemName: iconSystemName, completedDayKeys: [])) // add to end of list
         save()
-    }
-
-    func delete(id: UUID) {
-        habits.removeAll { $0.id == id }
-        save()
-    }
-
-    func remove(title: String) {
-        guard let habit = habits.first(where: { $0.title.caseInsensitiveCompare(title) == .orderedSame }) else { return }
-        delete(id: habit.id)
     }
 
     func isCompleted(_ habit: Habit, on date: Date) -> Bool {
