@@ -5,9 +5,10 @@ struct MainTabView: View {
 
     var body: some View {
         TabView { // bottom nav bar
-            mainView(name: name)
+
+            habitTrackerView()
                 .tabItem {
-                    Label("Home", systemImage: "house")
+                    Label("Habits", systemImage: "checkmark.circle")
                 }
 
             settingsView()

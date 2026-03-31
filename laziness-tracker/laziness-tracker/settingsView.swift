@@ -20,7 +20,6 @@ struct settingsView: View {
                 }
                 Section("App") {
                     LabeledContent {
-                                    // The button goes here as the content
                                     Button("") {
                                         isAlertShown = true // show onboarding again
                                     }
@@ -31,7 +30,7 @@ struct settingsView: View {
                                         }
                                     }
                                     } label: {
-                                    // The label (description)
+                                    // the label (description)
                                     Text("Reset")
                                             .foregroundStyle(.red)
                                 }
@@ -50,6 +49,8 @@ struct settingsView: View {
     }
     func resetApp() {
         name = "" // clears the saved name
+        // clear all saved habits
+        UserDefaults.standard.removeObject(forKey: "habitTracker.habits.v1")
     }
 }
 
