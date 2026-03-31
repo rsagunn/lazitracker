@@ -41,67 +41,63 @@ final class HabitStore { // cant be used in another class
     }
 
     func isCompleted(_ habit: Habit, on date: Date) -> Bool {
-        habit.completedDayKeys.contains(dayKey(for: date))
+        habit.completedDayKeys.contains(dayKey(for: date)) // returns boolean if completed or not
     }
 
     func toggle(_ habit: Habit, on date: Date) {
-        guard let idx = habits.firstIndex(where: { $0.id == habit.id }) else { return }
-        let key = dayKey(for: date)
-        if habits[idx].completedDayKeys.contains(key) { habits[idx].completedDayKeys.remove(key) }
-        else { habits[idx].completedDayKeys.insert(key) }
+        guard let idx = habits.firstIndex(where: { $0.id == habit.id }) else { return } // find index of habits in array by matching habit uuid if nil return
+        let key = dayKey(for: date) 
+        if habits[idx].completedDayKeys.contains(key) { habits[idx].completedDayKeys.remove(key) } // check if completed if it is remove daykey to mark not complete
+        else { habits[idx].completedDayKeys.insert(key) } // if not add daykey
         save()
     }
 
     private func load() {
-        guard let data = UserDefaults.standard.data(forKey: habitsStorageKey) else { return }
-        guard let decoded = try? JSONDecoder().decode([Habit].self, from: data) else { return }
-        habits = decoded
+        guard let data = UserDefaults.standard.data(forKey: habitsStorageKey) else { return } // try to get data if none return
+        guard let decoded = try? JSONDecoder().decode([Habit].self, from: data) else { return } // try to decode data into array if fails return
+        habits = decoded // assign decoded to habbit array
     }
 
     private func save() {
-        guard let data = try? JSONEncoder().encode(habits) else { return }
-        UserDefaults.standard.set(data, forKey: habitsStorageKey)
+        guard let data = try? JSONEncoder().encode(habits) else { return } // try to convert into json if fails return
+        UserDefaults.standard.set(data, forKey: habitsStorageKey) // save to userdefault
     }
 }
 
 struct habitTrackerView: View {
     @State private var store = HabitStore()
-    @State private var newTitle = ""
-    @State private var isAdding = false
+    @State private var newTitle = "" // title input of habit
+    @State private var isAdding = false // new habit sheet
 
-    @State private var selectedDate = Date()
+    @State private var selectedDate = Date() // selected day default today
 
-    @State private var newIconSystemName: String?
-    @State private var isIconPickerCollapsed = true
+    @State private var newIconSystemName: String? // icon for habit
+    @State private var isIconPickerCollapsed = true // icon picker minimize 
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @AppStorage("userName") private var name: String = ""
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass // make ui adapt to screen width
+    @AppStorage("userName") private var name: String = "" // username
 
     var body: some View {
         NavigationStack {
             TimelineView(.atHourBoundaries) { context in
-                let greeting = name.isEmpty ? "\(context.date.timeGreeting)!" : "\(context.date.timeGreeting), \(name)!"
+                let greeting = name.isEmpty ? "\(context.date.timeGreeting)!" : "\(context.date.timeGreeting), \(name)!" //  greeeting name
                 ZStack {
                     Color(.systemGroupedBackground).ignoresSafeArea()
-                    ScrollView {
+                    ScrollView { // allow scrolling
                         VStack(alignment: .leading, spacing: 16) {
                             Text(greeting)
                                 .font(.title2.bold())
                                 .padding(.top)
                                 .padding(.horizontal)
 
-                            if horizontalSizeClass == .regular {
-                                dailyCard()
-                                    .padding(.horizontal)
-                            } else {
-                                dailyCard()
-                                    .padding(.horizontal)
+                            dailyCard()
+                            .padding(.horizontal)
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Habits")
+            .navigationTitle("Habits") // app title
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -112,12 +108,12 @@ struct habitTrackerView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isAdding) {
+            .sheet(isPresented: $isAdding) { // new page toggle isadding
                 NavigationStack {
                     Form {
                         Section {
-                            TextField("Habit name", text: $newTitle)
-                                .textInputAutocapitalization(.sentences)
+                            TextField("Habit name", text: $newTitle) // upd newtitle
+                                .textInputAutocapitalization(.sentences) // auto cap first letter
                         }
 
                         Section {
@@ -136,13 +132,13 @@ struct habitTrackerView: View {
                                 }
                             }
                             .buttonStyle(.plain)
-                            if !isIconPickerCollapsed {
-                                let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+                            if !isIconPickerCollapsed { // show if is open
+                                let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())] // 3 grid col layout streches equally to width of screen
                                 LazyVGrid(columns: columns, spacing: 12) {
-                                    ForEach(habitIconOptions) { option in
+                                    ForEach(habitIconOptions) { option in // put all icons in
                                         let selected = option.systemImage == newIconSystemName
                                         Button {
-                                            newIconSystemName = option.systemImage
+                                            newIconSystemName = option.systemImage // when tapped select icon
                                         } label: {
                                             VStack(spacing: 6) {
                                                 Image(systemName: option.systemImage)
@@ -171,20 +167,20 @@ struct habitTrackerView: View {
                     .navigationTitle("New habit")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
+                        ToolbarItem(placement: .cancellationAction) { // cancel btn
                             Button("Cancel") { isAdding = false }
                         }
-                        ToolbarItem(placement: .confirmationAction) {
+                        ToolbarItem(placement: .confirmationAction) { // add btn
                             Button("Add") {
                                 store.add(title: newTitle, iconSystemName: newIconSystemName)
                                 isAdding = false
                             }
-                            .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                            .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) // disable if no name input
                         }
                     }
                     .onAppear {
                         if newIconSystemName == nil {
-                            newIconSystemName = habitIconOptions.first?.systemImage
+                            newIconSystemName = habitIconOptions.first?.systemImage // auto pick first icon
                         }
                     }
                 }
@@ -193,9 +189,9 @@ struct habitTrackerView: View {
     }
 
     private func dailyCard() -> some View {
-        CardShell {
+        CardShell { // rouunded bg
             VStack(alignment: .leading, spacing: 12) {
-                if !store.habits.isEmpty {
+                if !store.habits.isEmpty { // only show if u have habits
                     HStack {
                         Text("Habits")
                             .font(.headline)
@@ -203,28 +199,28 @@ struct habitTrackerView: View {
                     }
 
                     let doneCount = store.habits.reduce(0) { count, habit in
-                        count + (store.isCompleted(habit, on: selectedDate) ? 1 : 0)
+                        count + (store.isCompleted(habit, on: selectedDate) ? 1 : 0) // count how mny u finished
                     }
-                    let totalCount = store.habits.count
+                    let totalCount = store.habits.count // count all habits
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("\(doneCount)/\(totalCount) done")
+                        Text("\(doneCount)/\(totalCount) done") // ratio of how many u done
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
                         ForEach(store.habits) { habit in
-                                let completed = store.isCompleted(habit, on: selectedDate)
+                                let completed = store.isCompleted(habit, on: selectedDate) // check if each habit is complete
                                 Button {
-                                    store.toggle(habit, on: selectedDate)
+                                    store.toggle(habit, on: selectedDate) // mark done
                                 } label: {
                                     HStack(spacing: 12) {
-                                        Image(systemName: habit.iconSystemName ?? habitIconSystemName(for: habit.title))
+                                        Image(systemName: habit.iconSystemName ?? habitIconSystemName(for: habit.title)) // turn habit icon green
                                             .foregroundStyle(completed ? .green : .secondary)
-                                        Text(habit.title)
+                                        Text(habit.title) // line out
                                             .strikethrough(completed, color: .secondary)
                                             .foregroundStyle(completed ? .secondary : .primary)
                                         Spacer()
-                                        Image(systemName: completed ? "checkmark.circle.fill" : "circle")
+                                        Image(systemName: completed ? "checkmark.circle.fill" : "circle") //checkmark
                                             .foregroundStyle(completed ? .green : .secondary)
                                     }
                                     .padding(.vertical, 6)
