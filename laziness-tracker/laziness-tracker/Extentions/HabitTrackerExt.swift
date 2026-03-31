@@ -113,31 +113,3 @@ func habitIconSystemName(for title: String) -> String {
     let idx = abs(title.hashValue) % fallbackIcons.count
     return fallbackIcons[idx]
 }
-
-struct NotificationBanner: View {
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "bell.fill")
-                .font(.title3)
-                .foregroundStyle(.white)
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Notification!")
-                    .font(.headline.bold())
-                    .foregroundStyle(.white)
-                Text("Now is the time to read the book you can change it in settings.")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.9))
-                    .lineLimit(2)
-            }
-            Spacer()
-            Image(systemName: "lock.fill")
-                .foregroundStyle(.white.opacity(0.8))
-        }
-        .padding(12)
-        .background(
-            Color.black.opacity(0.78),
-            in: RoundedRectangle(cornerRadius: 14, style: .continuous)
-        )
-    }
-}
-
