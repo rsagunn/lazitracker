@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UserNotifications
 
 private let habitsStorageKey = "habitTracker.habits.v1"
 
@@ -17,54 +16,6 @@ private func dayKey(for date: Date) -> String {
     return String(format: "%04d-%02d-%02d", y, m, d)
 }
 
-
-private enum ReminderSchedule: String, CaseIterable, Identifiable, Codable {
-    case everyDay = "Every day"
-    case weekdays = "Weekdays"
-    case weekends = "Weekends"
-    var id: String { rawValue }
-}
-
-private enum ReminderManager {
-    static func requestAuthorizationIfNeeded() {
-        let center = UNUserNotificationCenter.current()
-        center.getNotificationSettings { settings in
-            if settings.authorizationStatus == .notDetermined {
-                center.requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
-            }
-        }
-    }
-
-    static func scheduleReminder(id: String, title: String, schedule: ReminderSchedule, time: Date) {
-        let center = UNUserNotificationCenter.current()
-        cancelReminder(id: id)
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.sound = .default
-        let dateComponents = Calendar.current.dateComponents([.hour, .minute], from: time)
-        let weekdays = [2,3,4,5,6] // Mon-Fri
-        let weekends = [1,7] // Sun, Sat
-        let days: [Int]
-        switch schedule {
-        case .everyDay: days = Array(1...7)
-        case .weekdays: days = weekdays
-        case .weekends: days = weekends
-        }
-        for day in days {
-            var comps = dateComponents
-            comps.weekday = day
-            let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)
-            let request = UNNotificationRequest(identifier: id + "_\(day)", content: content, trigger: trigger)
-            center.add(request, withCompletionHandler: nil)
-        }
-    }
-
-    static func cancelReminder(id: String) {
-        let center = UNUserNotificationCenter.current()
-        let ids = (1...7).map { id + "_\($0)" }
-        center.removePendingNotificationRequests(withIdentifiers: ids)
-    }
-}
 
 struct Habit: Identifiable, Codable, Equatable {
     var id: UUID
@@ -133,9 +84,6 @@ struct habitTrackerView: View {
 
     @State private var newIconSystemName: String?
     @State private var isIconPickerCollapsed = true
-    @State private var reminderEnabled = false
-    @State private var reminderSchedule: ReminderSchedule = .everyDay
-    @State private var reminderTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @AppStorage("userName") private var name: String = ""
@@ -230,18 +178,6 @@ struct habitTrackerView: View {
                             }
                         } header: { Text("Icon") }
 
-                        Section("Reminder") {
-                            Toggle("Enable reminder", isOn: $reminderEnabled)
-                            if reminderEnabled {
-                                Picker("Schedule", selection: $reminderSchedule) {
-                                    ForEach(ReminderSchedule.allCases) { sched in
-                                        Text(sched.rawValue).tag(sched)
-                                    }
-                                }
-                                DatePicker("Time", selection: $reminderTime, displayedComponents: .hourAndMinute)
-                                    .datePickerStyle(.compact)
-                            }
-                        }
                     }
                     .navigationTitle("New habit")
                     .navigationBarTitleDisplayMode(.inline)
@@ -252,13 +188,6 @@ struct habitTrackerView: View {
                         ToolbarItem(placement: .confirmationAction) {
                             Button("Add") {
                                 store.add(title: newTitle, iconSystemName: newIconSystemName)
-                                if reminderEnabled {
-                                    ReminderManager.requestAuthorizationIfNeeded()
-                                    let id = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-                                    if !id.isEmpty {
-                                        ReminderManager.scheduleReminder(id: id, title: newTitle, schedule: reminderSchedule, time: reminderTime)
-                                    }
-                                }
                                 isAdding = false
                             }
                             .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
