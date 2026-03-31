@@ -25,24 +25,6 @@ struct CardShell<Content: View>: View {
     }
 }
 
-private struct HabitTemplate: Identifiable, Hashable {
-    var id: String { title }
-    let title: String
-    let systemImage: String
-    let accent: Color
-}
-
-private let habitTemplates: [HabitTemplate] = [
-    HabitTemplate(title: "Work Out", systemImage: "figure.strengthtraining.traditional", accent: .orange),
-    HabitTemplate(title: "Eat Food", systemImage: "fork.knife", accent: .pink),
-    HabitTemplate(title: "Music", systemImage: "music.note", accent: .purple),
-    HabitTemplate(title: "Art & Design", systemImage: "paintbrush", accent: .blue),
-    HabitTemplate(title: "Traveling", systemImage: "airplane", accent: .teal),
-    HabitTemplate(title: "Read Book", systemImage: "book.fill", accent: .green),
-    HabitTemplate(title: "Gaming", systemImage: "gamecontroller.fill", accent: .red),
-    HabitTemplate(title: "Mechanic", systemImage: "wrench.and.screwdriver.fill", accent: .gray),
-]
-
 struct HabitIconOption: Identifiable, Hashable {
     var id: String { systemImage }
     let systemImage: String
