@@ -86,9 +86,6 @@ let habitIconOptions: [HabitIconOption] = [
 ]
 
 func habitIconSystemName(for title: String) -> String {
-    if let template = habitTemplates.first(where: { $0.title.caseInsensitiveCompare(title) == .orderedSame }) {
-        return template.systemImage
-    }
 
     // fallback icon based on hash so it looks different per habit
     let fallbackIcons = ["checkmark.circle.fill", "bolt.fill", "book.fill", "leaf.fill", "star.fill", "heart.fill"]

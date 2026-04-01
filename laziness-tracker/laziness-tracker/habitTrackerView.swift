@@ -46,7 +46,7 @@ final class HabitStore { // cant be used in another class
 
     func toggle(_ habit: Habit, on date: Date) {
         guard let idx = habits.firstIndex(where: { $0.id == habit.id }) else { return } // find index of habits in array by matching habit uuid if nil return
-        let key = dayKey(for: date) 
+        let key = dayKey(for: date)
         if habits[idx].completedDayKeys.contains(key) { habits[idx].completedDayKeys.remove(key) } // check if completed if it is remove daykey to mark not complete
         else { habits[idx].completedDayKeys.insert(key) } // if not add daykey
         save()
@@ -72,7 +72,7 @@ struct habitTrackerView: View {
     @State private var selectedDate = Date() // selected day default today
 
     @State private var newIconSystemName: String? // icon for habit
-    @State private var isIconPickerCollapsed = true // icon picker minimize 
+    @State private var isIconPickerCollapsed = true // icon picker minimize
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass // make ui adapt to screen width
     @AppStorage("userName") private var name: String = "" // username
@@ -91,97 +91,96 @@ struct habitTrackerView: View {
                                 .padding(.horizontal)
 
                             dailyCard()
-                            .padding(.horizontal)
-                            }
+                                .padding(.horizontal)
                         }
                     }
                 }
             }
-            .navigationTitle("Habits") // app title
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        newTitle = ""
-                        isAdding = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
+        }
+        .navigationTitle("Habits") // app title
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    newTitle = ""
+                    isAdding = true
+                } label: {
+                    Image(systemName: "plus")
                 }
             }
-            .sheet(isPresented: $isAdding) { // new page toggle isadding
-                NavigationStack {
-                    Form {
-                        Section {
-                            TextField("Habit name", text: $newTitle) // upd newtitle
-                                .textInputAutocapitalization(.sentences) // auto cap first letter
-                        }
+        }
+        .sheet(isPresented: $isAdding) { // new page toggle isadding
+            NavigationStack {
+                Form {
+                    Section {
+                        TextField("Habit name", text: $newTitle) // upd newtitle
+                            .textInputAutocapitalization(.sentences) // auto cap first letter
+                    }
 
-                        Section {
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.2)) { isIconPickerCollapsed.toggle() }
-                            } label: {
-                                HStack {
-                                    Text("Choose icon")
-                                    Spacer()
-                                    if let name = newIconSystemName {
-                                        Image(systemName: name)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    Image(systemName: isIconPickerCollapsed ? "chevron.down" : "chevron.up")
+                    Section {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) { isIconPickerCollapsed.toggle() }
+                        } label: {
+                            HStack {
+                                Text("Choose icon")
+                                Spacer()
+                                if let name = newIconSystemName {
+                                    Image(systemName: name)
                                         .foregroundStyle(.secondary)
                                 }
+                                Image(systemName: isIconPickerCollapsed ? "chevron.down" : "chevron.up")
+                                    .foregroundStyle(.secondary)
                             }
-                            .buttonStyle(.plain)
-                            if !isIconPickerCollapsed { // show if is open
-                                let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())] // 3 grid col layout streches equally to width of screen
-                                LazyVGrid(columns: columns, spacing: 12) {
-                                    ForEach(habitIconOptions) { option in // put all icons in
-                                        let selected = option.systemImage == newIconSystemName
-                                        Button {
-                                            newIconSystemName = option.systemImage // when tapped select icon
-                                        } label: {
-                                            VStack(spacing: 6) {
-                                                Image(systemName: option.systemImage)
-                                                    .font(.title3)
-                                                    .foregroundStyle(selected ? .orange : .secondary)
-                                            }
-                                            .padding(12)
-                                            .frame(maxWidth: .infinity)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                                    .fill(selected ? Color.orange.opacity(0.18) : .clear)
-                                            )
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                                    .stroke(selected ? Color.orange.opacity(0.8) : Color.black.opacity(0.08), lineWidth: 1)
-                                            )
+                        }
+                        .buttonStyle(.plain)
+                        if !isIconPickerCollapsed { // show if is open
+                            let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())] // 3 grid col layout streches equally to width of screen
+                            LazyVGrid(columns: columns, spacing: 12) {
+                                ForEach(habitIconOptions) { option in // put all icons in
+                                    let selected = option.systemImage == newIconSystemName
+                                    Button {
+                                        newIconSystemName = option.systemImage // when tapped select icon
+                                    } label: {
+                                        VStack(spacing: 6) {
+                                            Image(systemName: option.systemImage)
+                                                .font(.title3)
+                                                .foregroundStyle(selected ? .orange : .secondary)
                                         }
-                                        .buttonStyle(.plain)
+                                        .padding(12)
+                                        .frame(maxWidth: .infinity)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                                .fill(selected ? Color.orange.opacity(0.18) : .clear)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                                .stroke(selected ? Color.orange.opacity(0.8) : Color.black.opacity(0.08), lineWidth: 1)
+                                        )
                                     }
+                                    .buttonStyle(.plain)
                                 }
-                                .transition(.opacity.combined(with: .move(edge: .top)))
                             }
-                        } header: { Text("Icon") }
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                        }
+                    } header: { Text("Icon") }
 
+                }
+                .navigationTitle("New habit")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { // cancel btn
+                        Button("Cancel") { isAdding = false }
                     }
-                    .navigationTitle("New habit")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) { // cancel btn
-                            Button("Cancel") { isAdding = false }
+                    ToolbarItem(placement: .confirmationAction) { // add btn
+                        Button("Add") {
+                            store.add(title: newTitle, iconSystemName: newIconSystemName)
+                            isAdding = false
                         }
-                        ToolbarItem(placement: .confirmationAction) { // add btn
-                            Button("Add") {
-                                store.add(title: newTitle, iconSystemName: newIconSystemName)
-                                isAdding = false
-                            }
-                            .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) // disable if no name input
-                        }
+                        .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) // disable if no name input
                     }
-                    .onAppear {
-                        if newIconSystemName == nil {
-                            newIconSystemName = habitIconOptions.first?.systemImage // auto pick first icon
-                        }
+                }
+                .onAppear {
+                    if newIconSystemName == nil {
+                        newIconSystemName = habitIconOptions.first?.systemImage // auto pick first icon
                     }
                 }
             }
@@ -209,24 +208,24 @@ struct habitTrackerView: View {
                             .foregroundStyle(.secondary)
 
                         ForEach(store.habits) { habit in
-                                let completed = store.isCompleted(habit, on: selectedDate) // check if each habit is complete
-                                Button {
-                                    store.toggle(habit, on: selectedDate) // mark done
-                                } label: {
-                                    HStack(spacing: 12) {
-                                        Image(systemName: habit.iconSystemName ?? habitIconSystemName(for: habit.title)) // turn habit icon green
-                                            .foregroundStyle(completed ? .green : .secondary)
-                                        Text(habit.title) // line out
-                                            .strikethrough(completed, color: .secondary)
-                                            .foregroundStyle(completed ? .secondary : .primary)
-                                        Spacer()
-                                        Image(systemName: completed ? "checkmark.circle.fill" : "circle") //checkmark
-                                            .foregroundStyle(completed ? .green : .secondary)
-                                    }
-                                    .padding(.vertical, 6)
+                            let completed = store.isCompleted(habit, on: selectedDate) // check if each habit is complete
+                            Button {
+                                store.toggle(habit, on: selectedDate) // mark done
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: habit.iconSystemName ?? habitIconSystemName(for: habit.title)) // turn habit icon green
+                                        .foregroundStyle(completed ? .green : .secondary)
+                                    Text(habit.title) // line out
+                                        .strikethrough(completed, color: .secondary)
+                                        .foregroundStyle(completed ? .secondary : .primary)
+                                    Spacer()
+                                    Image(systemName: completed ? "checkmark.circle.fill" : "circle") //checkmark
+                                        .foregroundStyle(completed ? .green : .secondary)
                                 }
-                                .buttonStyle(.plain)
+                                .padding(.vertical, 6)
                             }
+                            .buttonStyle(.plain)
+                        }
                     }
                     .padding(.top, 6)
                 } else {
